@@ -26,9 +26,6 @@
 #include <glib.h>
 #include <math.h>  // for isnan
 
-#include <libgnomevfs/gnome-vfs.h>
-#include <libgnomevfs/gnome-vfs-inet-connection.h>
-
 #ifdef USE_LIBGPS
 #include <gps.h>
 #endif

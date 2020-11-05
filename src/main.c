@@ -485,10 +485,6 @@ int main(int argc, char *argv[]) {
   textdomain(PACKAGE);
 #endif
 
-  /* prepare thread system. the map uses soup which in turn seems */
-  /* to need this */
-  g_thread_init(NULL);
-
   gtk_init (&argc, &argv);
 
 #ifdef USE_MAEMO

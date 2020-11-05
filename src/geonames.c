@@ -663,7 +663,7 @@ void on_title_clicked(GtkButton *button, gpointer user_data) {
   GtkWidget *root = 
     GTK_WIDGET(gtk_window_get_transient_for(GTK_WINDOW(parent)));
 #endif
-  browser_url(root, user_data);
+  //browser_url(root, user_data);
 }
 
 void thumbnail_cb(net_result_t *result, gpointer data) {
