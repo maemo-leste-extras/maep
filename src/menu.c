@@ -88,8 +88,10 @@ cb_menu_rotation(GtkWidget *item, gpointer data) {
   g_object_set_data(G_OBJECT(data), GCONF_KEY_SCREEN_ROTATE, 
 		    (gpointer)menu_get_active(item));
 
+  /*
   if(menu_get_active(item))  rotation_enable(toplevel);
   else                       rotation_disable(toplevel);
+  */
 }
 #endif
 
