@@ -59,12 +59,6 @@ PKG_CHECK_MODULES([libcurl], [libcurl], [], [AC_MSG_ERROR([libcurl missing])])
 CFLAGS="$CFLAGS $libcurl_CFLAGS"
 LIBS="$LIBS $libcurl_LIBS"
 
-# check for gnome-vfs-module-2.0
-PKG_CHECK_MODULES([gnome_vfs_module], [gnome-vfs-module-2.0], [], [AC_MSG_ERROR(
-[gnome-vfs-module-2.0 missing])])
-CFLAGS="$CFLAGS $gnome_vfs_module_CFLAGS"
-LIBS="$LIBS $gnome_vfs_module_LIBS"
-
 # check for libxml-2.0
 PKG_CHECK_MODULES([libxml2], [libxml-2.0], [], [AC_MSG_ERROR([libxml-2.0 missing])])
 CFLAGS="$CFLAGS $libxml2_CFLAGS"
@@ -103,7 +97,7 @@ PKG_CHECK_MODULES([bluez], [bluez], [
 
 # check for maemo
 AC_MSG_CHECKING([for Maemo])
-PKG_CHECK_EXISTS(maemo-version, [
+PKG_CHECK_EXISTS(liblocation, [
   MAEMO="yes"
   AC_MSG_RESULT(yes)
 
@@ -128,28 +122,28 @@ PKG_CHECK_EXISTS(maemo-version, [
   ], [
     AC_MSG_NOTICE([gpsbt not found, trying liblocation])
 
-    PKG_CHECK_EXISTS(liblocation, [ 
+    PKG_CHECK_EXISTS(liblocation, [
       PKG_CHECK_MODULES([liblocation], [liblocation], [], [])
       CFLAGS="$CFLAGS -DENABLE_LIBLOCATION $liblocation_CFLAGS"
       LIBS="$LIBS $liblocation_LIBS"
     ], [
       AC_MSG_NOTICE([WARNING: No liblocation nor gpsbt found, disabling gps auto start!])
     ])
-  ]) 
+  ])
 
   PKG_CHECK_EXISTS(tablet-browser-interface, [
     CFLAGS="$CFLAGS -DENABLE_BROWSER_INTERFACE"
   ], [AC_MSG_NOTICE([WARNING: No tablet-browser-interface found, disabling microb interface!])])
 
-  PKG_CHECK_EXISTS(maemo-version, [
-    VERSION=`pkg-config --modversion maemo-version`
+  PKG_CHECK_EXISTS(liblocation, [
+    VERSION=5
     AC_MSG_NOTICE([Configuring for Maemo $VERSION])
     CFLAGS="$CFLAGS -DMAEMO_VERSION=\\\"$VERSION\\\""
     MAJOR=`echo $VERSION | cut -b1 -`
     CFLAGS="$CFLAGS -DMAEMO_VERSION_MAJOR=$MAJOR"
     MAEMO_VERSION_MAJOR=$MAJOR
   ], [
-    AC_MSG_ERROR([maemo-version not found])
+    AC_MSG_ERROR([liblocation not found])
   ])
 
   INSTALL_PLATTFORM="install-maemo"
@@ -159,18 +153,18 @@ PKG_CHECK_EXISTS(maemo-version, [
   if [[ "$MAJOR" == "5" ]]; then
      ICONNAME=maep.48.png
      datarootdir=/opt
-  else	
+  else
      ICONNAME=maep.26.png
   fi
 
   AC_MSG_NOTICE([Using application installer icon "$ICONNAME"])
-  
+
   # add icon entry to debian/control
   ICON=" Maemo icon $ICONNAME
 XB-Maemo-Icon-26:
 "
 
-  # generate base64 icon, remove first and last line 
+  # generate base64 icon, remove first and last line
   # and add a space before each line
   ICON="$ICON`uuencode -m data/$ICONNAME $ICONNAME | sed '1d;$d;s/^/ /' -`"
 
@@ -180,7 +174,7 @@ XB-Maemo-Icon-26:
   # check for gtk+-2.0
   PKG_CHECK_MODULES([gtk], [gtk+-2.0], [], [AC_MSG_ERROR([gtk+-2.0 missing!])])
   CFLAGS="$CFLAGS $gtk_CFLAGS"
-  LIBS="$LIBS $gtk_LIBS"	   
+  LIBS="$LIBS $gtk_LIBS"
 
   # non-maemo device use gnome to call the web browser
   PKG_CHECK_MODULES([gnome2], [libgnome-2.0], [], [AC_MSG_ERROR([libgnome-2.0 missing])])
