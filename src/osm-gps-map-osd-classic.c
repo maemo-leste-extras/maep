@@ -708,6 +708,7 @@ osd_source_content(osm_gps_map_osd_t *osd, cairo_t *cr, gint offset) {
     osd_priv_t *priv = (osd_priv_t*)osd->priv; 
 
     int py = offset + OSD_S_RAD - OSD_S_D0;
+    int source_valid;
 
     if(!priv->source_sel.expanded) {
         /* draw the "puller" open (<) arrow */
@@ -737,6 +738,9 @@ osd_source_content(osm_gps_map_osd_t *osd, cairo_t *cr, gint offset) {
             int i, step = (priv->source_sel.height - 2*OSD_TEXT_BORDER - OSD_DPIX_SKIP) / 
                 (num_map_sources + OSD_DPIX_EXTRA);
             for(i=0;i<num_map_sources + OSD_DPIX_EXTRA;i++) {
+		/* With OSD_DPIX_EXTRA > 0, map_sources[i] is not valid for the
+                 * last iteration, so guard against that */
+                source_valid = i < num_map_sources;
                 cairo_text_extents_t extents;
                 const char *src = NULL;
 #if OSD_DPIX_EXTRA > 0
@@ -744,9 +748,12 @@ osd_source_content(osm_gps_map_osd_t *osd, cairo_t *cr, gint offset) {
                 const char *dpix = _("Double Pixel");
                 if(i == num_map_sources) {
                     src = dpix;
-                } else
+                } else {
 #endif
                 src = osm_gps_map_source_get_friendly_name( map_sources[i] );
+#if OSD_DPIX_EXTRA > 0
+}
+#endif
 
                 cairo_text_extents (cr, src, &extents);
                 
@@ -794,7 +801,7 @@ osd_source_content(osm_gps_map_osd_t *osd, cairo_t *cr, gint offset) {
 #endif
 
                 /* draw filled rectangle if selected */
-                if(source == map_sources[i]) {
+                if(source_valid && source == map_sources[i]) {
                     cairo_rectangle(cr, x - OSD_TEXT_BORDER/2, 
                                     y - OSD_TEXT_SKIP, 
                                     priv->source_sel.width - OSD_TEXT_BORDER, 
@@ -814,7 +821,7 @@ osd_source_content(osm_gps_map_osd_t *osd, cairo_t *cr, gint offset) {
                 cairo_show_text (cr, src);
 
                 /* restore color */
-                if(source == map_sources[i]) {
+                if(source_valid && source == map_sources[i]) {
 #ifndef OSD_COLOR
                     GdkColor fg = osd->widget->style->fg[GTK_STATE_NORMAL];
                     gdk_cairo_set_source_color(cr, &fg);
